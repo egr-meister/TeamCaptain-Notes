@@ -1,0 +1,12 @@
+# Copy this file to local.properties and fill in your own values.
+# NEVER commit local.properties to Git. It is listed in .gitignore.
+
+# Path to your Android SDK (set automatically by Android Studio if missing).
+# sdk.dir=/Users/you/Library/Android/sdk
+
+# football-data.org API v4 configuration.
+# Get a free token at https://www.football-data.org/client/register
+# If the token is missing, empty, or left as the placeholder below,
+# the app automatically falls back to bundled demo match data and never crashes.
+FOOTBALL_DATA_API_TOKEN=your_api_token_here
+FOOTBALL_API_BASE_URL=https://api.football-data.org/v4

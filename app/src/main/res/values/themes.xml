@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base app theme. Compose drives the real UI colors; this is used before
+         the first Compose frame and for window chrome. -->
+    <style name="Theme.TeamCaptainNotes" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/captain_green_deep</item>
+        <item name="android:navigationBarColor">@color/app_background</item>
+        <item name="android:windowBackground">@color/app_background</item>
+    </style>
+
+    <!-- Custom splash screen theme (uses AndroidX SplashScreen). -->
+    <style name="Theme.TeamCaptainNotes.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.TeamCaptainNotes</item>
+    </style>
+
+</resources>

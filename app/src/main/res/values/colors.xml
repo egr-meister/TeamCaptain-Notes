@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Green-Blue Captain Board identity palette. -->
+    <color name="captain_green">#1F7A4D</color>
+    <color name="captain_green_deep">#17633E</color>
+    <color name="captain_blue">#2E3F8F</color>
+    <color name="captain_blue_deep">#243477</color>
+    <color name="app_background">#F7F8F6</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="splash_background">#17633E</color>
+</resources>

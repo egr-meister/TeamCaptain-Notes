@@ -23,11 +23,17 @@ val footballApiToken: String = readProp("FOOTBALL_DATA_API_TOKEN", "your_api_tok
 val footballApiBaseUrl: String = readProp("FOOTBALL_API_BASE_URL", "https://api.football-data.org/v4")
 
 // --- Optional release signing pulled from environment (GitHub Secrets). ---
-val keystorePath: String? = System.getenv("ANDROID_KEYSTORE_PATH")
-val keystorePassword: String? = System.getenv("ANDROID_KEYSTORE_PASSWORD")
-val keyAlias: String? = System.getenv("ANDROID_KEY_ALIAS")
-val keyPassword: String? = System.getenv("ANDROID_KEY_PASSWORD")
-val hasReleaseSigning = !keystorePath.isNullOrBlank() && file(keystorePath).exists()
+// NOTE: these locals are intentionally NOT named keyAlias/keyPassword, because
+// inside signingConfigs.create("release") { } those names would collide with the
+// SigningConfig receiver's own properties and cause a silent self-assignment.
+val envKeystorePath: String? = System.getenv("ANDROID_KEYSTORE_PATH")
+val envStorePassword: String? = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+val envKeyAlias: String? = System.getenv("ANDROID_KEY_ALIAS")
+val envKeyPassword: String? = System.getenv("ANDROID_KEY_PASSWORD")
+// The key password defaults to the store password (same value per project policy).
+val effectiveKeyPassword: String? = envKeyPassword?.ifBlank { null } ?: envStorePassword
+val hasReleaseSigning =
+    !envKeystorePath.isNullOrBlank() && file(envKeystorePath).exists() && !envStorePassword.isNullOrBlank()
 
 android {
     namespace = "com.teamcaptain.notes"
@@ -50,10 +56,10 @@ android {
     signingConfigs {
         if (hasReleaseSigning) {
             create("release") {
-                storeFile = file(keystorePath!!)
-                storePassword = keystorePassword
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
+                storeFile = file(envKeystorePath!!)
+                storePassword = envStorePassword
+                keyAlias = envKeyAlias?.ifBlank { null } ?: "teamcaptain_notes_key"
+                keyPassword = effectiveKeyPassword
                 // PKCS12 keystore.
                 storeType = "PKCS12"
             }

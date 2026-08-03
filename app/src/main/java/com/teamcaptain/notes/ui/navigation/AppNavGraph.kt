@@ -79,7 +79,7 @@ fun AppNavGraph(
     val navController = rememberNavController()
     // Decide start once, after data has loaded, so returning users skip onboarding.
     val startRoute = remember {
-        if (appViewModel.appData.value.settings.onboardingCompleted) Routes.HOME else Routes.ONBOARDING
+        if (appViewModel.startAtOnboarding) Routes.ONBOARDING else Routes.HOME
     }
 
     NavHost(navController = navController, startDestination = startRoute) {

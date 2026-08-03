@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -38,9 +38,29 @@ class AppViewModel(private val repo: LocalRepository) : ViewModel() {
     /** Becomes true after the first real read from disk completes. */
     val isReady: StateFlow<Boolean> = _isReady.asStateFlow()
 
+    /**
+     * Captured once from the first disk read, before [isReady] flips true, so the
+     * navigation start destination is decided deterministically (no race with the
+     * appData stream). Only read after isReady == true.
+     */
+    var startAtOnboarding: Boolean = true
+        private set
+
+    // Eagerly started so the DataStore read begins as soon as the ViewModel is
+    // created — independent of whether the UI is subscribed yet.
     val appData: StateFlow<AppData> = repo.appData
-        .onEach { _isReady.value = true }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AppData())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, AppData())
+
+    init {
+        // Read the first value from disk on our own collection so this can never
+        // deadlock waiting for a UI subscriber. Decide the start route, then flip
+        // readiness last.
+        viewModelScope.launch {
+            val firstData = runCatching { repo.appData.first() }.getOrDefault(AppData())
+            startAtOnboarding = !firstData.settings.onboardingCompleted
+            _isReady.value = true
+        }
+    }
 
     private fun now() = DateUtils.nowIsoTimestamp()
 

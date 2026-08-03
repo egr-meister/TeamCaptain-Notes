@@ -19,6 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -82,8 +85,8 @@ fun AttendanceScreen(vm: AppViewModel, nav: NavController, matchId: String?) {
             items(players, key = { it.id }) { player ->
                 val record = data.attendance.firstOrNull { it.matchId == match.id && it.playerId == player.id }
                 val status = record?.attendanceStatus ?: AttendanceStatus.UNKNOWN
-                var noteText by androidx.compose.runtime.remember(player.id, match.id) {
-                    androidx.compose.runtime.mutableStateOf(record?.note ?: "")
+                var noteText by remember(player.id, match.id) {
+                    mutableStateOf(record?.note ?: "")
                 }
                 BoardCard {
                     Text(player.name.ifBlank { "Unnamed player" }, style = MaterialTheme.typography.titleMedium)
